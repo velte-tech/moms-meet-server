@@ -404,7 +404,7 @@ exports.likePost = catchAsync(async (req, res, next) => {
       message: "Post liked successfully",
     });
   } catch (error) {
-    console.error("Error liking post:", error);
+    console.error("Error liking the post:", error);
     res.status(500).json({
       status: "error",
       message: "Internal Server Error",
