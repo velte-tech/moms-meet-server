@@ -5,42 +5,42 @@ const postController = require("../controllers/post");
 const router = express.Router();
 
 // Post Routes
-router.post("/posts", authController.protect, postController.createPost);
+router.post("/", authController.protect, postController.createPost);
 //router.get("/posts", authController.protect, postController.getPosts);
-router.get("/posts", postController.getPosts);
+router.get("/", postController.getPosts);
 router.get(
-  "/posts/user/:userId",
+  "/user/:userId",
   authController.protect,
   postController.getSingleUserPosts
 );
-router.get("/posts/:id", authController.protect, postController.updatePost);
-router.put("/posts/:id", authController.protect, postController.updatePost);
+router.get("/:id", authController.protect, postController.updatePost);
+router.put("/:id", authController.protect, postController.updatePost);
 
 // Comment Routes
 router.post(
-  "/posts/:postId/comments",
+  "/:postId/comments",
   authController.protect,
   postController.createComment
 );
 router.put(
-  "/posts/:postId/comments/:commentId",
+  "/:postId/comments/:commentId",
   authController.protect,
   postController.updateComment
 );
 router.delete(
-  "/posts/:postId/comments/:commentId",
+  "/:postId/comments/:commentId",
   authController.protect,
   postController.deleteComment
 );
 
 // Like Routes
 router.post(
-  "/posts/:postId/likes",
+  "/:postId/likes",
   authController.protect,
   postController.createLike
 );
 router.delete(
-  "/posts/:postId/likes/:likeId",
+  "/:postId/likes/:likeId",
   authController.protect,
   postController.deleteLike
 );
