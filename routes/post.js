@@ -6,7 +6,14 @@ const router = express.Router();
 
 // Post Routes
 router.post("/posts", authController.protect, postController.createPost);
+//router.get("/posts", authController.protect, postController.getPosts);
 router.get("/posts", postController.getPosts);
+router.get(
+  "/posts/user/:userId",
+  authController.protect,
+  postController.getSingleUserPosts
+);
+router.get("/posts/:id", authController.protect, postController.updatePost);
 router.put("/posts/:id", authController.protect, postController.updatePost);
 
 // Comment Routes
