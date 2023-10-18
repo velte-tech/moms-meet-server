@@ -48,63 +48,105 @@ exports.createPost = [
   }),
 ];
 
-// exports.createPost = catchAsync(async (req, res, next) => {
-//   const { body, user } = req;
+// exports.getPosts = catchAsync(async (req, res, next) => {
+//  // const page = req.query.page || 1;
+//   const limit = 10;
+//   const skip = (page - 1) * limit;
 
-//   // Validate content presence and length
-//   if (!body.content || body.content.trim().length === 0) {
-//     return res.status(400).json({
-//       status: "fail",
-//       message: "Content is required for the post",
+//   try {
+//     const totalPosts = await modelPost.countDocuments();
+//     const totalPages = Math.ceil(totalPosts / limit);
+
+//     const posts = await modelPost
+//       .find()
+//       .sort({ createdAt: -1 })
+//       .skip(skip)
+//       .limit(limit)
+//       .populate("user", "firstName lastName -_id");
+
+//     res.status(200).json({
+//       status: "success",
+//       data: {
+//         posts,
+//         totalPosts,
+//         totalPages,
+//         currentPage: page,
+//       },
+//       message: "Posts found successfully!",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       status: "error",
+//       message: "Internal server error",
 //     });
 //   }
-
-//   // Trim content to a maximum of 1000 characters
-//   const trimmedContent = body.content.trim().substring(0, 1000);
-
-//   // Sanitize HTML content to prevent XSS attacks
-//   const sanitizedContent = sanitizeHtml(trimmedContent, {
-//     allowedTags: [], // Allow no tags
-//     allowedAttributes: {}, // Allow no attributes
-//   });
-
-//   // Create new post
-//   const newPost = await modelPost.create({
-//     content: sanitizedContent,
-//     user: user._id,
-//     fullContent: body.content, // Store the full content separately if needed
-//   });
-
-//   res.status(201).json({
-//     status: "success",
-//     data: newPost,
-//     message: "Post created successfully",
-//   });
 // });
 
 exports.getPosts = catchAsync(async (req, res, next) => {
-  const page = req.query.page || 1;
-  const limit = 10;
-  const skip = (page - 1) * limit;
-
   try {
-    const totalPosts = await modelPost.countDocuments();
-    const totalPages = Math.ceil(totalPosts / limit);
-
     const posts = await modelPost
       .find()
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
+      .sort({ created_at: 1 })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "user",
+          select: "firstName lastName -_id",
+        },
+      })
+      .populate({
+        path: "likes",
+        populate: {
+          path: "user",
+          select: "firstName lastName -_id",
+        },
+      })
       .populate("user", "firstName lastName -_id");
 
     res.status(200).json({
       status: "success",
       data: {
         posts,
-        totalPosts,
-        totalPages,
-        currentPage: page,
+      },
+      message: "Posts found successfully!",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: "Internal server error",
+    });
+  }
+});
+
+exports.getSingleUserPosts = catchAsync(async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const posts = await modelPost
+      .find({ user: userId })
+      .sort({ created_at: -1 })
+      .populate({
+        path: "comments",
+        populate: {
+          path: "user",
+          select: "firstName lastName -_id",
+        },
+      })
+      .populate({
+        path: "likes",
+        populate: {
+          path: "user",
+          select: "firstName lastName -_id",
+        },
+      })
+      .populate("user", "firstName lastName -_id");
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        posts,
       },
       message: "Posts found successfully!",
     });

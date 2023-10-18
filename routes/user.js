@@ -11,6 +11,4 @@ router.get("/users", authController.protect, userController.getUsers);
 router.get("/requests", authController.protect, userController.getRequests);
 router.get("/friends", authController.protect, userController.getFriends);
 
-// router.get("/get-posts", authController.protect, userController.getPosts);
-
 module.exports = router;

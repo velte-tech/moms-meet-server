@@ -11,6 +11,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Last Name is required"],
   },
+  occupation: {
+    type: String,
+  },
   about: {
     type: String,
   },
@@ -57,7 +60,7 @@ const userSchema = new mongoose.Schema({
   },
   verified: {
     type: Boolean,
-    default: false,
+    default: true, // !change this to false.
   },
   otp: {
     type: String,

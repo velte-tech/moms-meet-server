@@ -1,13 +1,7 @@
 const app = require("./app");
-
 const dotenv = require("dotenv");
-
 const mongoose = require("mongoose");
-
-dotenv.config();
-
 const path = require("path");
-
 const { Server } = require("socket.io");
 
 process.on("uncaughtException", (err) => {
@@ -15,8 +9,9 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
-const http = require("http");
+dotenv.config();
 
+const http = require("http");
 const server = http.createServer(app);
 
 // Schemas
@@ -176,17 +171,6 @@ io.on("connection", async (socket) => {
     }
   });
 
-  // socket.on("get_messages", async (data, callback) => {
-  //   try {
-  //     const { messages } = await OneToOneMessage.findById(
-  //       data.conversation_id
-  //     ).select("messages");
-  //     callback(messages);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // });
-
   socket.on("get_messages", async (data, callback) => {
     try {
       const conversation = await OneToOneMessage.findById(data.conversation_id);
@@ -203,47 +187,6 @@ io.on("connection", async (socket) => {
       callback({ error: "Internal server error" });
     }
   });
-
-  // Handle incoming text/link messages
-  // socket.on("text_message", async (data) => {
-  //   console.log("Received message:", data);
-
-  //   // data: {to, from, text}
-
-  //   const { message, conversation_id, from, to, type } = data;
-
-  //   const to_user = await modelUser.findById(to);
-  //   const from_user = await modelUser.findById(from);
-
-  //   // message => {to, from, type, created_at, text, file}
-
-  //   const new_message = {
-  //     to: to,
-  //     from: from,
-  //     type: type,
-  //     created_at: Date.now(),
-  //     text: message,
-  //   };
-
-  //   // fetch OneToOneMessage Doc & push a new message to existing conversation
-  //   const chat = await OneToOneMessage.findById(conversation_id);
-  //   chat.messages.push(new_message);
-  //   // save to db`
-  //   await chat.save({ new: true, validateModifiedOnly: true });
-
-  //   // emit incoming_message -> to user
-
-  //   io.to(to_user?.socket_id).emit("new_message", {
-  //     conversation_id,
-  //     message: new_message,
-  //   });
-
-  //   // emit outgoing_message -> from user
-  //   io.to(from_user?.socket_id).emit("new_message", {
-  //     conversation_id,
-  //     message: new_message,
-  //   });
-  // });
 
   socket.on("text_message", async (data) => {
     console.log("Received message:", data);
